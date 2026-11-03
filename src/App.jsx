@@ -47,6 +47,15 @@ export default function App() {
     }
   }, []);
 
+  // Route access guard: Ensure non-admins cannot stay on admin_dashboard
+  useEffect(() => {
+    if (currentView === 'admin_dashboard' && !isAdmin) {
+      setCurrentView('library');
+    } else if (currentView === 'user_dashboard' && !isAuthenticated) {
+      setCurrentView('library');
+    }
+  }, [currentView, isAuthenticated, isAdmin]);
+
   // Fetch Public Categories
   useEffect(() => {
     fetch('/api/magazines/categories')
@@ -291,8 +300,15 @@ export default function App() {
         isOpen={isAuthOpen}
         initialTab={authInitialTab}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={() => {
+        onSuccess={(destination, loggedInUser) => {
           fetchPublicMagazines();
+          if (destination) {
+            setCurrentView(destination);
+          } else if (loggedInUser?.role === 'ADMIN') {
+            setCurrentView('admin_dashboard');
+          } else {
+            setCurrentView('user_dashboard');
+          }
         }}
       />
 

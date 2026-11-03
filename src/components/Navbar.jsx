@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Crown, PlusCircle, LayoutDashboard, ShieldCheck, LogIn, LogOut, User as UserIcon } from 'lucide-react';
+import { BookOpen, Crown, PlusCircle, LayoutDashboard, ShieldCheck, LogIn, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Navbar({ currentView, setCurrentView, onOpenAuth, onOpenSubmit }) {
@@ -48,7 +48,7 @@ export default function Navbar({ currentView, setCurrentView, onOpenAuth, onOpen
           <button
             onClick={() => {
               if (!isAuthenticated) {
-                onOpenAuth('login');
+                onOpenAuth('user_login');
               } else {
                 onOpenSubmit();
               }
@@ -89,7 +89,7 @@ export default function Navbar({ currentView, setCurrentView, onOpenAuth, onOpen
         </nav>
 
         {/* Right Section (User Auth State) */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2.5 bg-[#121418] border border-zinc-800 px-3 py-1.5 rounded-full">
@@ -114,18 +114,31 @@ export default function Navbar({ currentView, setCurrentView, onOpenAuth, onOpen
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              {/* Normal User Sign In */}
               <button
-                onClick={() => onOpenAuth('login')}
-                className="px-3.5 py-1.5 text-sm font-medium text-zinc-300 hover:text-white transition-colors flex items-center gap-1.5"
+                onClick={() => onOpenAuth('user_login')}
+                className="px-3 py-1.5 text-xs sm:text-sm font-medium text-zinc-300 hover:text-white transition-colors flex items-center gap-1.5"
               >
                 <LogIn className="w-4 h-4" />
-                Sign In
+                <span>User Login</span>
               </button>
+
+              {/* Normal User Register */}
               <button
                 onClick={() => onOpenAuth('register')}
-                className="px-4 py-2 text-sm font-bold text-black bg-yellow-500 hover:bg-yellow-400 rounded-lg shadow-sm transition-all hover:shadow-gold-glow"
+                className="hidden sm:inline-flex px-3.5 py-1.5 text-xs sm:text-sm font-medium text-zinc-300 hover:text-white border border-zinc-700/80 hover:border-zinc-500 rounded-lg transition-colors"
               >
                 Register
+              </button>
+
+              {/* Dedicated Admin Login */}
+              <button
+                onClick={() => onOpenAuth('admin_login')}
+                className="px-3.5 py-1.5 text-xs sm:text-sm font-bold text-yellow-400 hover:text-black bg-yellow-500/10 hover:bg-yellow-500 border border-yellow-500/40 hover:border-transparent rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+                title="Super Admin Sayhan Authentication"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                <span>Admin Login</span>
               </button>
             </div>
           )}
@@ -135,4 +148,3 @@ export default function Navbar({ currentView, setCurrentView, onOpenAuth, onOpen
     </header>
   );
 }
-

@@ -2,6 +2,32 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+async function safeApiRequest(url, options = {}) {
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch (networkErr) {
+    throw new Error(`Unable to connect to the server (${networkErr.message}). Please ensure the backend is running.`);
+  }
+
+  const rawText = await res.text();
+  let data = {};
+  
+  try {
+    if (rawText && rawText.trim().length > 0) {
+      data = JSON.parse(rawText);
+    }
+  } catch {
+    throw new Error(`Server returned unexpected non-JSON response (HTTP ${res.status}).`);
+  }
+
+  if (!res.ok) {
+    throw new Error(data.error || data.message || `Request failed with status code ${res.status}`);
+  }
+
+  return data;
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
@@ -17,13 +43,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      fetch('/api/auth/me', {
+      safeApiRequest('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then(res => {
-          if (!res.ok) throw new Error('Session expired');
-          return res.json();
-        })
         .then(data => {
           setUser(data.user);
           localStorage.setItem('yr_auth_user', JSON.stringify(data.user));
@@ -37,16 +59,13 @@ export function AuthProvider({ children }) {
     }
   }, [token]);
 
+  // Normal User Login
   const login = async (email, password) => {
-    const res = await fetch('/api/auth/login', {
+    const data = await safeApiRequest('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || 'Login failed');
-    }
 
     setToken(data.token);
     setUser(data.user);
@@ -55,16 +74,28 @@ export function AuthProvider({ children }) {
     return data;
   };
 
+  // Dedicated Super Admin Login (Sayhan)
+  const adminLogin = async (email, password) => {
+    const data = await safeApiRequest('/api/auth/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    setToken(data.token);
+    setUser(data.user);
+    localStorage.setItem('yr_auth_token', data.token);
+    localStorage.setItem('yr_auth_user', JSON.stringify(data.user));
+    return data;
+  };
+
+  // User Registration
   const register = async (fullName, email, phone, password) => {
-    const res = await fetch('/api/auth/register', {
+    const data = await safeApiRequest('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ full_name: fullName, email, phone, password })
     });
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.error || 'Registration failed');
-    }
 
     setToken(data.token);
     setUser(data.user);
@@ -83,14 +114,11 @@ export function AuthProvider({ children }) {
   const refreshUser = async () => {
     if (!token) return;
     try {
-      const res = await fetch('/api/auth/me', {
+      const data = await safeApiRequest('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-        localStorage.setItem('yr_auth_user', JSON.stringify(data.user));
-      }
+      setUser(data.user);
+      localStorage.setItem('yr_auth_user', JSON.stringify(data.user));
     } catch (e) {
       console.warn('Failed to refresh user:', e);
     }
@@ -103,6 +131,7 @@ export function AuthProvider({ children }) {
     isAuthenticated: !!user,
     isAdmin: user?.role === 'ADMIN',
     login,
+    adminLogin,
     register,
     logout,
     refreshUser
@@ -118,4 +147,3 @@ export function useAuth() {
   }
   return context;
 }
-

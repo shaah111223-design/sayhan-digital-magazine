@@ -50,6 +50,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Explicit API 404 handler to ensure JSON response for any unhandled /api route
+app.all('/api/*', (req, res) => {
+  res.status(404).json({
+    error: `API endpoint ${req.method} ${req.originalUrl} not found`
+  });
+});
+
 // Serve frontend in production (dist directory)
 const distDir = path.resolve(process.cwd(), 'dist');
 if (fs.existsSync(distDir)) {

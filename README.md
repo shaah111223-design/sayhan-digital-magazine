@@ -86,18 +86,19 @@ Open your browser to:
 
 ---
 
-## 🔑 Login Credentials
+## 🔑 Authentication Architecture
 
-### Super Admin (Sayhan)
-- **Email**: `yellowreignacademy@gmail.com`
-- **Phone**: `9544498843`
-- **Password**: `Sayhan@2026`
-- *(Tip: Click the "Quick Fill: Super Admin Sayhan" button on the Sign In modal)*
+### 1. Super Admin Authentication (Sayhan)
+- Dedicated **Admin Login** portal accessible from the navigation header or login dialog.
+- Requires manual entry of Sayhan's verified email and password.
+- Strictly authenticated on the backend with role-based access verification before granting Admin Dashboard access.
+- Non-admin accounts attempting admin login are denied with a 403 Forbidden alert.
 
-### Author Accounts (Anyone)
-- Click **Register** on the top right.
-- Provide Full Name, Email, Phone number, and Password.
-- Log in to access your personal dashboard, private content folder, and submission tools.
+### 2. Author Accounts (User Login & Registration)
+- Normal **User Login** and **Register** portals for authors.
+- Authors enter their individual registered email and password manually.
+- Redirected directly to their private personal vault dashboard.
+- Standard users are strictly barred from all administrative and publication functions.
 
 ---
 

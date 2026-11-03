@@ -20,10 +20,13 @@ export default function Footer({ onOpenAdminAuth }) {
             <p className="text-sm text-zinc-400 leading-relaxed max-w-md">
               A high-caliber digital magazine submission and publishing sanctuary. All registered works undergo meticulous editorial review and cryptographic verification before being elevated into the permanent public library.
             </p>
-            <div className="inline-flex items-center gap-2 bg-[#101216] border border-yellow-500/30 px-3.5 py-1.5 rounded-full text-xs text-yellow-400">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Super Admin Publishing Protocol Active</span>
-            </div>
+            <button
+              onClick={() => onOpenAdminAuth?.('admin_login')}
+              className="inline-flex items-center gap-2 bg-[#101216] hover:bg-[#181a20] border border-yellow-500/30 hover:border-yellow-500/60 px-3.5 py-1.5 rounded-full text-xs text-yellow-400 transition-colors cursor-pointer text-left"
+            >
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              <span>Super Admin Publishing Protocol Active (Admin Sign In)</span>
+            </button>
           </div>
 
           {/* Super Admin Direct Contacts */}
