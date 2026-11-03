@@ -141,3 +141,4 @@ runAuthTests().catch(err => {
   console.error('\n❌ AUTH TEST FAILED:', err);
   process.exit(1);
 });
+

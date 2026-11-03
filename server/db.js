@@ -3,12 +3,27 @@ import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import bcrypt from 'bcryptjs';
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
+const isVercel = !!process.env.VERCEL;
+const DATA_DIR = isVercel ? '/tmp' : path.resolve(process.cwd(), 'data');
+
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
 const DB_PATH = path.join(DATA_DIR, 'yellow_reign.sqlite');
+
+// On Vercel, copy the pre-seeded repository SQLite database to /tmp if not already present
+if (isVercel && !fs.existsSync(DB_PATH)) {
+  const seedDbPath = path.resolve(process.cwd(), 'data', 'yellow_reign.sqlite');
+  if (fs.existsSync(seedDbPath)) {
+    try {
+      fs.copyFileSync(seedDbPath, DB_PATH);
+    } catch (e) {
+      console.warn('[Database] Seed copy warning:', e.message);
+    }
+  }
+}
+
 export const db = new DatabaseSync(DB_PATH);
 
 // Enable WAL mode and foreign keys for high performance and integrity

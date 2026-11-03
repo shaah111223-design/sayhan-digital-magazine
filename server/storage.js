@@ -3,7 +3,8 @@ import path from 'node:path';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 
-export const UPLOADS_ROOT = path.resolve(process.cwd(), 'uploads');
+const isVercel = !!process.env.VERCEL;
+export const UPLOADS_ROOT = isVercel ? '/tmp/uploads' : path.resolve(process.cwd(), 'uploads');
 export const USERS_UPLOADS = path.join(UPLOADS_ROOT, 'users');
 export const OFFICIAL_UPLOADS = path.join(UPLOADS_ROOT, 'official');
 
