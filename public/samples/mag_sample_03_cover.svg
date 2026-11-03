@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1130" width="100%" height="100%">
+    <defs>
+      <radialGradient id="coverGlow" cx="50%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#3a2f05" />
+        <stop offset="60%" stop-color="#111317" />
+        <stop offset="100%" stop-color="#0a0b0e" />
+      </radialGradient>
+      <linearGradient id="goldText" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FBBF24" />
+        <stop offset="50%" stop-color="#F59E0B" />
+        <stop offset="100%" stop-color="#D97706" />
+      </linearGradient>
+    </defs>
+    
+    <rect width="800" height="1130" fill="url(#coverGlow)" />
+    
+    <!-- Accent Border Frame -->
+    <rect x="25" y="25" width="750" height="1080" fill="none" stroke="#EAB308" stroke-width="2.5" />
+    <rect x="35" y="35" width="730" height="1060" fill="none" stroke="#3f3f46" stroke-width="1" />
+
+    <!-- Top Masthead -->
+    <g transform="translate(50, 75)">
+      <text x="0" y="20" fill="#EAB308" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" letter-spacing="3">ACADEMY EDITION</text>
+      <text x="700" y="20" text-anchor="end" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="12" letter-spacing="2">NOVEMBER 2026</text>
+      <line x1="0" y1="35" x2="700" y2="35" stroke="#EAB308" stroke-width="1.5" />
+    </g>
+
+    <!-- Main Title Branding -->
+    <g transform="translate(400, 200)" text-anchor="middle">
+      <text x="0" y="0" fill="url(#goldText)" font-family="Georgia, serif" font-size="64" font-weight="bold" letter-spacing="6">YELLOW REIGN</text>
+      <text x="0" y="35" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="18" font-weight="600" letter-spacing="8">DIGITAL MAGAZINE</text>
+      <line x1="-120" y1="55" x2="120" y2="55" stroke="#EAB308" stroke-width="2" />
+    </g>
+
+    <!-- Geometric Center Artwork -->
+    <g transform="translate(400, 520)">
+      <circle cx="0" cy="0" r="160" fill="#14171d" stroke="#EAB308" stroke-opacity="0.3" stroke-width="3" />
+      <circle cx="0" cy="0" r="130" fill="none" stroke="#EAB308" stroke-width="1" stroke-dasharray="8,6" />
+      <polygon points="0,-100 86,50 -86,50" fill="none" stroke="url(#goldText)" stroke-width="3" />
+      <polygon points="0,100 86,-50 -86,-50" fill="none" stroke="#FFFFFF" stroke-opacity="0.7" stroke-width="2" />
+      <circle cx="0" cy="0" r="24" fill="#EAB308" />
+      <text x="0" y="7" text-anchor="middle" fill="#000000" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">YR</text>
+    </g>
+
+    <!-- Cover Story -->
+    <g transform="translate(50, 780)">
+      <rect x="0" y="0" width="140" height="28" rx="4" fill="#EAB308" />
+      <text x="70" y="19" text-anchor="middle" fill="#000000" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" letter-spacing="1.5">BIZ</text>
+      <text x="0" y="75" fill="#FFFFFF" font-family="Georgia, serif" font-size="38" font-weight="bold">Global Leadership: The Executive Frontier</text>
+      <text x="0" y="115" fill="#d4d4d8" font-family="system-ui, sans-serif" font-size="18" font-weight="400">Strategic frameworks, leadership psychology, and high-impact decision model...</text>
+    </g>
+
+    <!-- Bottom Features & Super Admin Stamp -->
+    <g transform="translate(50, 980)">
+      <line x1="0" y1="0" x2="700" y2="0" stroke="#3f3f46" stroke-width="1" />
+      <text x="0" y="35" fill="#EAB308" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">CURATED BY SUPER ADMIN SAYHAN</text>
+      <text x="0" y="55" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="12">Verified & Approved for Global Public Distribution</text>
+      <text x="700" y="35" text-anchor="end" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">ISSUE #03</text>
+      <text x="700" y="55" text-anchor="end" fill="#EAB308" font-family="system-ui, sans-serif" font-size="12">Author: Marcus Sterling</text>
+    </g>
+  </svg>

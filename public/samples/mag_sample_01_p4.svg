@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1130" width="100%" height="100%">
+    <defs>
+      <linearGradient id="bgGrad_4" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#0e1013" />
+        <stop offset="100%" stop-color="#14171c" />
+      </linearGradient>
+      <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#EAB308" />
+        <stop offset="100%" stop-color="#FDE047" />
+      </linearGradient>
+    </defs>
+    
+    <!-- Background Canvas -->
+    <rect width="800" height="1130" fill="url(#bgGrad_4)" />
+    
+    <!-- Outer Elegant Border -->
+    <rect x="25" y="25" width="750" height="1080" fill="none" stroke="#27272a" stroke-width="1.5" />
+    <rect x="35" y="35" width="730" height="1060" fill="none" stroke="#EAB308" stroke-opacity="0.25" stroke-width="1" />
+    
+    <!-- Header Banner -->
+    <text x="50" y="70" fill="#EAB308" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="900" letter-spacing="4">YELLOW REIGN ACADEMY EDITORIAL</text>
+    <text x="750" y="70" text-anchor="end" fill="#71717a" font-family="system-ui, sans-serif" font-size="12" letter-spacing="1">VOL. IV • EDITION 2026</text>
+    <line x1="50" y1="85" x2="750" y2="85" stroke="#27272a" stroke-width="1" />
+
+    <!-- Top Badge -->
+    <rect x="50" y="120" width="110" height="26" rx="4" fill="#EAB308" />
+    <text x="105" y="137" text-anchor="middle" fill="#000000" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" letter-spacing="1.5">AESTHETICS</text>
+
+    <!-- Page Title & Subtitle -->
+    <text x="50" y="195" fill="#FFFFFF" font-family="Georgia, serif" font-size="34" font-weight="bold">Design Philosophy: Black & Gold</text>
+    <text x="50" y="230" fill="#EAB308" font-family="system-ui, sans-serif" font-size="16" font-weight="600" letter-spacing="1">The Visual Grammar of Mastery</text>
+
+    <!-- Visual Feature Block -->
+    <g transform="translate(50, 270)">
+      <rect width="700" height="380" rx="10" fill="#181a20" stroke="#27272a" />
+      <circle cx="350" cy="190" r="130" fill="none" stroke="#EAB308" stroke-opacity="0.15" stroke-width="2" />
+      <circle cx="350" cy="190" r="90" fill="none" stroke="#EAB308" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="6,6" />
+      <polygon points="350,90 420,240 280,240" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+      <text x="350" y="295" text-anchor="middle" fill="#f4f4f5" font-family="Georgia, serif" font-size="18" font-style="italic">"Where ambition meets institutional mastery."</text>
+      <text x="350" y="325" text-anchor="middle" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="12" letter-spacing="2">ACADEMY CURATED EXHIBIT</text>
+    </g>
+
+    <!-- Columns of Text -->
+    <g transform="translate(50, 680)">
+      <rect width="335" height="340" rx="8" fill="#121418" stroke="#27272a" />
+      <text x="25" y="40" fill="#EAB308" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" letter-spacing="1">SECTION I: SYNTHESIS</text>
+      <foreignObject x="25" y="55" width="285" height="260">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="color: #d4d4d8; font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.7; text-align: justify;">
+          The yellow and black palette commands attention, conveys decisive executive presence, and emphasizes high-contrast legibility across desktop and mobile displays.
+        </div>
+      </foreignObject>
+    </g>
+
+    <g transform="translate(415, 680)">
+      <rect width="335" height="340" rx="8" fill="#121418" stroke="#27272a" />
+      <text x="25" y="40" fill="#EAB308" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" letter-spacing="1">SECTION II: EXECUTIVE PERSPECTIVE</text>
+      <foreignObject x="25" y="55" width="285" height="260">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="color: #d4d4d8; font-family: system-ui, sans-serif; font-size: 13px; line-height: 1.7; text-align: justify;">
+          The transformation of modern digital publishing demands absolute clarity of intent, unyielding artistic standard, and robust architectural permanence. Each submission undergoes comprehensive peer evaluation before publication into our permanent repository.
+        </div>
+      </foreignObject>
+    </g>
+
+    <!-- Footer & Page Number -->
+    <line x1="50" y1="1050" x2="750" y2="1050" stroke="#27272a" stroke-width="1" />
+    <text x="50" y="1075" fill="#71717a" font-family="system-ui, sans-serif" font-size="11">SUPER ADMIN CURATION • SAYHAN</text>
+    <text x="400" y="1075" text-anchor="middle" fill="#EAB308" font-family="system-ui, sans-serif" font-size="14" font-weight="bold">— PAGE 4 —</text>
+    <text x="750" y="1075" text-anchor="end" fill="#71717a" font-family="system-ui, sans-serif" font-size="11">YELLOW REIGN ARCHIVE</text>
+  </svg>
