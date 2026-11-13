@@ -3,6 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import jwt from 'jsonwebtoken';
 import { db } from '../db.js';
+import { USERS_UPLOADS, OFFICIAL_UPLOADS } from '../storage.js';
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'yellow_reign_academy_super_secret_jwt_key_2026';
@@ -35,22 +36,21 @@ function verifyAccess(req, magazine) {
 }
 
 function resolveFilePath(magazine, filename) {
-  // Check user submission folder
-  const userPath = path.resolve(process.cwd(), 'uploads', 'users', magazine.user_id, 'submissions', magazine.id, filename);
-  if (fs.existsSync(userPath)) {
-    return userPath;
-  }
+  // Candidate paths across Vercel /tmp storage and local workspace storage
+  const candidatePaths = [
+    path.join(USERS_UPLOADS, magazine.user_id, 'submissions', magazine.id, filename),
+    path.join(OFFICIAL_UPLOADS, magazine.id, filename),
+    path.resolve(process.cwd(), 'uploads', 'users', magazine.user_id, 'submissions', magazine.id, filename),
+    path.resolve(process.cwd(), 'uploads', 'official', magazine.id, filename),
+    path.resolve(process.cwd(), 'public', 'samples', filename),
+    path.join('/tmp', 'uploads', 'users', magazine.user_id, 'submissions', magazine.id, filename),
+    path.join('/tmp', 'uploads', 'official', magazine.id, filename)
+  ];
 
-  // Check official uploads folder
-  const officialPath = path.resolve(process.cwd(), 'uploads', 'official', magazine.id, filename);
-  if (fs.existsSync(officialPath)) {
-    return officialPath;
-  }
-
-  // Check static assets / sample covers folder
-  const samplePath = path.resolve(process.cwd(), 'public', 'samples', filename);
-  if (fs.existsSync(samplePath)) {
-    return samplePath;
+  for (const candidate of candidatePaths) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
   }
 
   return null;

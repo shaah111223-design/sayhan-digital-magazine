@@ -181,6 +181,57 @@ router.post('/admin-login', async (req, res) => {
   }
 });
 
+// POST /api/auth/admin/reset-password (Secure Server-Side Password Reset for Sayhan)
+router.post('/admin/reset-password', async (req, res) => {
+  try {
+    const { email, adminResetKey, newPassword } = req.body;
+
+    if (!email || !adminResetKey || !newPassword) {
+      return res.status(400).json({ error: 'Email, adminResetKey, and newPassword are required.' });
+    }
+
+    const trimmedEmail = email.trim().toLowerCase();
+    if (trimmedEmail !== 'yellowreignacademy@gmail.com') {
+      return res.status(403).json({ error: 'Password reset via this procedure is strictly restricted to Super Admin Sayhan.' });
+    }
+
+    // Verify secret server key
+    const expectedSecret = process.env.ADMIN_RESET_KEY || process.env.JWT_SECRET || 'yellow_reign_academy_super_secret_jwt_key_2026';
+    if (adminResetKey !== expectedSecret) {
+      return res.status(401).json({ error: 'Invalid admin reset authorization key.' });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters long.' });
+    }
+
+    const admin = db.prepare('SELECT id, full_name, role FROM users WHERE email = ?').get(trimmedEmail);
+    if (!admin || admin.role !== 'ADMIN') {
+      return res.status(404).json({ error: 'Super Admin account not found.' });
+    }
+
+    const newHash = bcrypt.hashSync(newPassword, 10);
+    const now = new Date().toISOString();
+
+    db.prepare(`
+      UPDATE users
+      SET password_hash = ?,
+          updated_at = ?
+      WHERE id = ? AND email = ?
+    `).run(newHash, now, admin.id, trimmedEmail);
+
+    console.log(`[Security] Super Admin Sayhan password reset successfully at ${now}`);
+
+    res.json({
+      success: true,
+      message: `Super Admin password for ${admin.full_name} (${trimmedEmail}) has been successfully reset. You can now log in with your new password.`
+    });
+  } catch (err) {
+    console.error('[Auth] Reset password error:', err);
+    res.status(500).json({ error: 'Internal server error during password reset.' });
+  }
+});
+
 // GET /api/auth/me
 router.get('/me', authenticate, (req, res) => {
   const stats = db.prepare(`

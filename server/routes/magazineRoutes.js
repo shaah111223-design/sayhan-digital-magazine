@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db.js';
 import { authenticate, optionalAuth } from '../middleware/auth.js';
-import { uploadMiddleware, removeSubmissionFolder } from '../storage.js';
+import { uploadMiddleware, removeSubmissionFolder, getSubmissionFolder } from '../storage.js';
 import { sendSubmissionNotification } from '../email.js';
 
 const router = express.Router();
@@ -415,7 +415,8 @@ router.delete('/user/:magazineId/page/:pageId', authenticate, (req, res) => {
 
     // Delete file if exists
     try {
-      const filePath = path.join(process.cwd(), 'uploads', 'users', req.user.id, 'submissions', magazineId, page.file_path);
+      const folder = getSubmissionFolder(req.user.id, magazineId);
+      const filePath = path.join(folder, page.file_path);
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }

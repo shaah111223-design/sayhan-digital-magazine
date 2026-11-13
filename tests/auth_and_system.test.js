@@ -132,6 +132,53 @@ async function runAuthTests() {
   });
   assert(invalidTokenRes.status === 401, 'Corrupted token returns 401');
 
+  // 10. Super Admin Secure Password Reset Procedure
+  console.log('\n--- 10. Testing Super Admin Secure Password Reset ---');
+  const invalidSecretRes = await fetch(`${BASE_URL}/api/auth/admin/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: 'yellowreignacademy@gmail.com',
+      adminResetKey: 'invalid_secret_key',
+      newPassword: 'NewSecurePassword123!'
+    })
+  });
+  assert(invalidSecretRes.status === 401, 'Unauthorized reset key rejected with 401');
+
+  const validResetRes = await fetch(`${BASE_URL}/api/auth/admin/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: 'yellowreignacademy@gmail.com',
+      adminResetKey: 'yellow_reign_academy_super_secret_jwt_key_2026',
+      newPassword: 'Sayhan@SuperAdmin2026!'
+    })
+  });
+  const validResetData = await validResetRes.json();
+  assert(validResetRes.status === 200, 'Super Admin password reset successfully via secure API');
+  assert(validResetData.success === true, 'Success flag returned');
+
+  const verifyNewLogin = await fetch(`${BASE_URL}/api/auth/admin-login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: 'yellowreignacademy@gmail.com',
+      password: 'Sayhan@SuperAdmin2026!'
+    })
+  });
+  assert(verifyNewLogin.status === 200, 'Super Admin successfully authenticated with newly reset password');
+
+  // Re-sync back to Sayhan@2026
+  await fetch(`${BASE_URL}/api/auth/admin/reset-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: 'yellowreignacademy@gmail.com',
+      adminResetKey: 'yellow_reign_academy_super_secret_jwt_key_2026',
+      newPassword: 'Sayhan@2026'
+    })
+  });
+
   console.log('\n====================================================');
   console.log(`🎉 ALL ${passed}/${total} AUTHENTICATION & SECURITY TESTS PASSED!`);
   console.log('====================================================\n');

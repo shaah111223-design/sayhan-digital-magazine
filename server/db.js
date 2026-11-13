@@ -126,11 +126,21 @@ const adminEmail = 'yellowreignacademy@gmail.com';
 const existingAdmin = db.prepare('SELECT * FROM users WHERE email = ?').get(adminEmail);
 if (!existingAdmin) {
   const now = new Date().toISOString();
-  const passwordHash = bcrypt.hashSync('Sayhan@2026', 10);
+  const defaultPass = process.env.ADMIN_PASSWORD || 'Sayhan@2026';
+  const passwordHash = bcrypt.hashSync(defaultPass, 10);
   db.prepare(`
     INSERT INTO users (id, full_name, email, phone, password_hash, role, created_at, updated_at)
     VALUES (?, ?, ?, ?, ?, 'ADMIN', ?, ?)
   `).run('user-admin-sayhan', 'Sayhan', adminEmail, '9544498843', passwordHash, now, now);
   console.log(`[Database] Initialized Super Admin Sayhan (${adminEmail})`);
+} else if (process.env.ADMIN_PASSWORD && process.env.ADMIN_PASSWORD.trim().length >= 6) {
+  // Allow server environment variable override for secure admin password reset on cloud / Vercel
+  const configuredPass = process.env.ADMIN_PASSWORD.trim();
+  if (!bcrypt.compareSync(configuredPass, existingAdmin.password_hash)) {
+    const updatedHash = bcrypt.hashSync(configuredPass, 10);
+    db.prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE email = ?')
+      .run(updatedHash, new Date().toISOString(), adminEmail);
+    console.log(`[Security] Super Admin Sayhan password updated from ADMIN_PASSWORD environment variable.`);
+  }
 }
 

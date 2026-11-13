@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node server/index.js",
-    "build": "vite build"
+    "build": "vite build",
+    "test": "node tests/run_all.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -4,8 +4,12 @@ import { db } from './db.js';
 import { generateMagazineQrCode } from './utils/qr.js';
 
 const SAMPLES_DIR = path.resolve(process.cwd(), 'public', 'samples');
-if (!fs.existsSync(SAMPLES_DIR)) {
-  fs.mkdirSync(SAMPLES_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(SAMPLES_DIR)) {
+    fs.mkdirSync(SAMPLES_DIR, { recursive: true });
+  }
+} catch {
+  // Read-only filesystem in serverless environments (e.g. Vercel)
 }
 
 // Generate beautiful magazine page SVG
@@ -222,7 +226,13 @@ export async function seedSampleMagazines() {
       category: s.categoryId.replace('cat-', '').toUpperCase(),
       author: s.author
     });
-    fs.writeFileSync(coverPath, coverSvg, 'utf8');
+    try {
+      if (!fs.existsSync(coverPath)) {
+        fs.writeFileSync(coverPath, coverSvg, 'utf8');
+      }
+    } catch {
+      // Vercel serverless filesystem is read-only outside /tmp; sample assets in public/ are served by static CDN
+    }
 
     // Generate QR code for this published magazine
     const publicUrl = `${APP_URL}/read/${s.slug}`;
@@ -269,7 +279,13 @@ export async function seedSampleMagazines() {
         mainText: p.text,
         highlight: p.highlight
       });
-      fs.writeFileSync(pagePath, pageSvg, 'utf8');
+      try {
+        if (!fs.existsSync(pagePath)) {
+          fs.writeFileSync(pagePath, pageSvg, 'utf8');
+        }
+      } catch {
+        // Vercel serverless filesystem is read-only outside /tmp; sample assets in public/ are served by static CDN
+      }
 
       insertPage.run(
         `page_${s.id}_${pageNum}`,
