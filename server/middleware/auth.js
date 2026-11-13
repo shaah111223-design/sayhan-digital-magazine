@@ -9,7 +9,8 @@ export function generateToken(user) {
       id: user.id,
       email: user.email,
       role: user.role,
-      full_name: user.full_name
+      full_name: user.full_name,
+      phone: user.phone || ''
     },
     JWT_SECRET,
     { expiresIn: '30d' }
@@ -31,7 +32,47 @@ export function authenticate(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url, created_at FROM users WHERE id = ?').get(decoded.id);
+    if (!decoded || !decoded.id) {
+      return res.status(401).json({ error: 'Invalid authentication session structure.' });
+    }
+
+    // 1. Primary lookup by user ID
+    let user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url, created_at FROM users WHERE id = ?').get(decoded.id);
+
+    // 2. Secondary lookup by email if not found by ID (handling cross-instance/session discrepancies)
+    if (!user && decoded.email) {
+      user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url, created_at FROM users WHERE email = ?').get(decoded.email.toLowerCase().trim());
+    }
+
+    // 3. Persistent Serverless Synchronization:
+    // If the token was cryptographically signed by our JWT_SECRET (unexpired & authentic),
+    // but the current serverless instance lacks the user record (e.g. cold start, multi-container on Vercel):
+    if (!user && decoded.email) {
+      const now = new Date().toISOString();
+      const role = (decoded.role === 'ADMIN' && decoded.email.toLowerCase().trim() === 'yellowreignacademy@gmail.com') ? 'ADMIN' : 'USER';
+      const phone = decoded.phone || '';
+      const fullName = decoded.full_name || 'Registered Author';
+
+      try {
+        db.prepare(`
+          INSERT INTO users (id, full_name, email, phone, password_hash, role, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          decoded.id,
+          fullName,
+          decoded.email.toLowerCase().trim(),
+          phone,
+          'SESSION_RESTORED',
+          role,
+          now,
+          now
+        );
+        user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url, created_at FROM users WHERE id = ?').get(decoded.id);
+      } catch {
+        // If email already exists under another ID, resolve that existing record
+        user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url, created_at FROM users WHERE email = ?').get(decoded.email.toLowerCase().trim());
+      }
+    }
 
     if (!user) {
       return res.status(401).json({ error: 'User account no longer exists.' });
@@ -60,7 +101,42 @@ export function optionalAuth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    const user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url FROM users WHERE id = ?').get(decoded.id);
+    if (!decoded || !decoded.id) {
+      req.user = null;
+      return next();
+    }
+
+    let user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url FROM users WHERE id = ?').get(decoded.id);
+    if (!user && decoded.email) {
+      user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url FROM users WHERE email = ?').get(decoded.email.toLowerCase().trim());
+    }
+
+    if (!user && decoded.email) {
+      const now = new Date().toISOString();
+      const role = (decoded.role === 'ADMIN' && decoded.email.toLowerCase().trim() === 'yellowreignacademy@gmail.com') ? 'ADMIN' : 'USER';
+      const phone = decoded.phone || '';
+      const fullName = decoded.full_name || 'Registered Author';
+
+      try {
+        db.prepare(`
+          INSERT INTO users (id, full_name, email, phone, password_hash, role, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+          decoded.id,
+          fullName,
+          decoded.email.toLowerCase().trim(),
+          phone,
+          'SESSION_RESTORED',
+          role,
+          now,
+          now
+        );
+        user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url FROM users WHERE id = ?').get(decoded.id);
+      } catch {
+        user = db.prepare('SELECT id, full_name, email, phone, role, avatar_url FROM users WHERE email = ?').get(decoded.email.toLowerCase().trim());
+      }
+    }
+
     req.user = user || null;
   } catch {
     req.user = null;

@@ -345,7 +345,7 @@ router.post(
         sendSubmissionNotification({
           submitterName: req.user.full_name,
           email: req.user.email,
-          phone: req.user.phone,
+          phone: req.user.phone || 'Not provided',
           magazineTitle: title.trim(),
           description: description || '',
           category: cat ? cat.name : 'General',
